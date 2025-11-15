@@ -12,26 +12,27 @@ report:
   mode: "daily"
   rank_threshold: 5
 
-# ========== 核心修复配置 ==========
 notification:
   enable_notification: true
-  # 所有通知渠道配置必须留空（通过GitHub Secrets提供）
+  # ↓↓↓ 强制启用邮件通知 ↓↓↓
+  force_email_notification: true
+  
   webhooks:
+    # 所有字段保持为空
     feishu_url: ""
     dingtalk_url: ""
     wework_url: ""
     telegram_bot_token: ""
     telegram_chat_id: ""
-    email_from: ""       # 必须留空
-    email_password: ""    # 必须留空
-    email_to: ""         # 必须留空
-    email_smtp_server: "" # 必须留空
-    email_smtp_port: ""   # 必须留空
+    email_from: ""
+    email_password: ""
+    email_to: ""
+    email_smtp_server: ""
+    email_smtp_port: ""
     ntfy_server_url: "https://ntfy.sh"
     ntfy_topic: ""
     ntfy_token: ""
   
-  # 其他通知设置保持不变
   message_batch_size: 4000
   dingtalk_batch_size: 20000
   feishu_batch_size: 29000
@@ -45,22 +46,22 @@ notification:
     once_per_day: true
     push_record_retention_days: 7
 
-# ========== 邮件推送专用配置 ==========
+# 邮件推送开关
 push:
-  email: true  # 确保邮件推送开关开启
+  email: true
 
-# 网易邮箱专属SMTP配置（不可留空）
+# 邮箱配置（关键修改）
 email:
   enabled: true
-  sender: "热点推送助手"  # 发件人名称（可自定义）
-  receiver: ""           # 必须留空（通过Secret提供）
-  smtp_server: "smtp.163.com"  # 网易163邮箱服务器
-  smtp_port: 465                # 固定端口
-  smtp_ssl: true                # 必须启用SSL
-  smtp_username: ""             # 必须留空（通过Secret提供）
-  smtp_password: ""             # 必须留空（通过Secret提供）
+  # 使用环境变量读取Secrets
+  sender: "GitHub热点助手"
+  receiver: ${{ env.EMAIL_RECEIVER || "" }}
+  smtp_server: ${{ env.EMAIL_SMTP_SERVER || "smtp.163.com" }}
+  smtp_port: ${{ env.EMAIL_SMTP_PORT || 465 }}
+  smtp_ssl: true
+  smtp_username: ${{ env.EMAIL_USERNAME || "" }}
+  smtp_password: ${{ env.EMAIL_PASSWORD || "" }}
 
-# ========== 其他配置保持不变 ==========
 weight:
   rank_weight: 0.6
   frequency_weight: 0.3
